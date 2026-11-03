@@ -31,4 +31,4 @@ After the site is live, place one test order. FormSubmit will email orvana.team@
 
 ## Deploying
 
-Pushing to `main` deploys to GitHub Pages through `.github/workflows/pages.yml`. To set that up the first time, open the repo **Settings → Pages** and set **Source** to **GitHub Actions**.
+The site is hosted on Cloudflare Pages at https://orvana.pages.dev. Cloudflare redeploys automatically whenever `main` is pushed; there is no build step. Deploys and custom domains are managed in the Cloudflare dashboard under **Workers & Pages → orvana**.
