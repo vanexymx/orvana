@@ -72,7 +72,7 @@
         <div>
           <h2>Installation &amp; handover</h2>
           <p>The duct replaces the S70's original cover/panel behind the grille. It's plug-and-play and needs no major modifications to your car, but please take your time removing the stock part.</p>
-          <p>In KL or JB? Our team can install it for you or hand it over in person — message them on Instagram.</p>
+          <p>In KL or JB? Choose <a href="#order">Install / handover</a> when you order and we'll arrange it, or message our team on Instagram.</p>
           <div id="installers" class="installers"></div>
         </div>
         <ol class="steps">
@@ -96,26 +96,27 @@
         </div>
 
         <div class="card form">
-          <fieldset>
-            <legend>How would you like to receive it?</legend>
-            <div class="pills" role="radiogroup">
-              <div class="pill">
-                <input type="radio" name="mode" id="m-ship" value="ship" checked>
-                <label for="m-ship">Deliver to me</label>
-              </div>
-              <div class="pill">
-                <input type="radio" name="mode" id="m-meet" value="meet">
-                <label for="m-meet">Install / handover (KL, JB)</label>
-              </div>
-            </div>
-          </fieldset>
-
-          <div id="meet-panel" hidden>
-            <p class="muted">Message the person for your area on Instagram to arrange installation or handover.</p>
-            <div id="meet-installers" class="installers installers-stack"></div>
-          </div>
-
           <form id="order-form" novalidate>
+            <fieldset>
+              <legend>How would you like to receive it?</legend>
+              <div class="pills" role="radiogroup">
+                <div class="pill">
+                  <input type="radio" name="mode" id="m-ship" value="ship" checked>
+                  <label for="m-ship">Deliver to me</label>
+                </div>
+                <div class="pill">
+                  <input type="radio" name="mode" id="m-meet" value="meet">
+                  <label for="m-meet">Install / handover (KL, JB)</label>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset id="area-field" hidden>
+              <legend>Area</legend>
+              <div id="f-area" class="pills" role="radiogroup"></div>
+              <p class="note">We'll contact you to arrange the installation or handover.</p>
+            </fieldset>
+
             <fieldset>
               <legend>Product</legend>
               <select id="f-product" name="product" required></select>
@@ -149,7 +150,7 @@
                 <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
               </label>
             </div>
-            <label class="field">
+            <label class="field" id="address-field">
               <span>Delivery address</span>
               <textarea name="address" rows="3" autocomplete="street-address" required></textarea>
             </label>
@@ -157,10 +158,14 @@
               <span>Discount code <small>(optional)</small></span>
               <input name="discount" autocomplete="off">
             </label>
+            <fieldset>
+              <legend>Referral</legend>
+              <div id="f-referral" class="pills" role="radiogroup"></div>
+            </fieldset>
 
             <div class="summary" aria-live="polite">
               <div><span id="s-line">RM199 × 1</span><span id="s-sub">RM199</span></div>
-              <div><span>Shipping</span><span>Included</span></div>
+              <div><span id="s-ship-label">Shipping</span><span>Included</span></div>
               <div class="total"><span>Total</span><span id="s-total">RM199</span></div>
               <p class="note">Discount codes are applied when we confirm your order.</p>
             </div>
@@ -203,7 +208,7 @@
         </details>
         <details>
           <summary>Can someone install it for me?</summary>
-          <p>Yes, in KL and JB. Message <a data-installer="KL" href="#">our KL contact</a> or <a data-installer="JB" href="#">our JB contact</a> on Instagram to arrange installation or an in-person handover.</p>
+          <p>Yes, in KL and JB. Choose <em>Install / handover</em> when you order and we'll arrange it with you. You can also message <a data-installer="KL" href="#">our KL contact</a> or <a data-installer="JB" href="#">our JB contact</a> on Instagram.</p>
         </details>
         <details>
           <summary>Will it affect my car's warranty?</summary>

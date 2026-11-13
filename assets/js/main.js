@@ -33,7 +33,7 @@ import { ORVANA as cfg } from "./config.js";
       </a>`
     )
     .join("");
-  $$("#installers, #meet-installers").forEach((el) => (el.innerHTML = installerCards));
+  $("#installers") && ($("#installers").innerHTML = installerCards);
 
   // Product cards
   const list = $("#product-list");
@@ -74,14 +74,31 @@ import { ORVANA as cfg } from "./config.js";
   const qtyInput = $("#f-qty");
   const errorBox = $("#form-error");
   const submitBtn = $("#submit-btn");
-  const meetPanel = $("#meet-panel");
   const done = $("#order-done");
 
   productSel.innerHTML = available
     .map((p) => `<option value="${esc(p.id)}">${esc(p.name)} — ${money(p.price)}</option>`)
     .join("");
 
+  const radios = (name, options) =>
+    options
+      .map(
+        ([value, label, checked]) => `
+        <div class="pill">
+          <input type="radio" name="${name}" id="${name}-${esc(value)}" value="${esc(value)}" ${checked ? "checked" : ""}>
+          <label for="${name}-${esc(value)}">${label}</label>
+        </div>`
+      )
+      .join("");
+
+  $("#f-area").innerHTML = radios("area", cfg.installers.map((p) => [p.short, esc(p.area)]));
+  $("#f-referral").innerHTML = radios("referral", [
+    ...cfg.installers.map((p) => [p.handle, `@${esc(p.handle)}`]),
+    ["none", "None", true]
+  ]);
+
   const product = () => available.find((p) => p.id === productSel.value);
+  const isMeet = () => $("#m-meet").checked;
   const qty = () => Math.min(20, Math.max(1, parseInt(qtyInput.value, 10) || 1));
 
   function renderColours() {
@@ -103,15 +120,13 @@ import { ORVANA as cfg } from "./config.js";
     $("#s-total").textContent = money(p.price * qty());
   }
 
-  // Delivery vs. install/handover
-  $$('input[name="mode"]').forEach((r) =>
-    r.addEventListener("change", () => {
-      const meet = $("#m-meet").checked;
-      meetPanel.hidden = !meet;
-      form.hidden = meet;
-      done.hidden = true;
-    })
-  );
+  // Delivery needs an address; install/handover needs an area instead
+  function applyMode() {
+    $("#area-field").hidden = !isMeet();
+    $("#address-field").hidden = isMeet();
+    $("#s-ship-label").textContent = isMeet() ? "Install / handover" : "Shipping";
+  }
+  $$('input[name="mode"]').forEach((r) => r.addEventListener("change", applyMode));
 
   productSel.addEventListener("change", () => { renderColours(); renderSummary(); });
   qtyInput.addEventListener("input", renderSummary);
@@ -141,7 +156,11 @@ import { ORVANA as cfg } from "./config.js";
     if (!form.name.value.trim()) flag(form.name, "your name");
     if (!/^\+?\d{9,13}$/.test(form.phone.value.replace(/[\s-]/g, ""))) flag(form.phone, "a valid phone number");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim())) flag(form.email, "a valid email");
-    if (form.address.value.trim().length < 10) flag(form.address, "your full delivery address");
+    if (isMeet()) {
+      if (!form.area.value) problems.push("your area (KL or JB)");
+    } else if (form.address.value.trim().length < 10) {
+      flag(form.address, "your full delivery address");
+    }
     if (!form.agree.checked) problems.push("agreement to the terms");
     return problems;
   }
@@ -149,17 +168,20 @@ import { ORVANA as cfg } from "./config.js";
   function orderDetails() {
     const p = product();
     const colour = p.colours.find((c) => c.id === form.colour.value);
+    const area = cfg.installers.find((a) => a.short === form.area.value);
     return {
+      Receive: isMeet() ? `Install / handover — ${area ? area.area : "-"}` : "Delivery",
       Product: p.name,
       Colour: colour ? colour.label : "-",
       Quantity: qty(),
       "Unit price": money(p.price),
-      Total: `${money(p.price * qty())} (shipping included)`,
+      Total: money(p.price * qty()),
       Name: form.name.value.trim(),
       Phone: form.phone.value.trim(),
       Email: form.email.value.trim(),
-      Address: form.address.value.trim(),
+      ...(isMeet() ? {} : { Address: form.address.value.trim() }),
       "Discount code": form.discount.value.trim() || "-",
+      Referral: form.referral.value === "none" ? "None" : `@${form.referral.value}`,
       "Agreed to terms": "Yes"
     };
   }
@@ -186,14 +208,17 @@ import { ORVANA as cfg } from "./config.js";
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          mode: isMeet() ? "meet" : "ship",
+          area: isMeet() ? form.area.value : "",
           product: productSel.value,
           colour: form.colour.value,
           qty: qty(),
           name: form.name.value,
           phone: form.phone.value,
           email: form.email.value,
-          address: form.address.value,
+          address: isMeet() ? "" : form.address.value,
           discount: form.discount.value,
+          referral: form.referral.value,
           agree: form.agree.checked,
           website: form.website.value // honeypot, left empty by people
         })
@@ -204,6 +229,7 @@ import { ORVANA as cfg } from "./config.js";
       form.hidden = true;
       done.hidden = false;
       form.reset();
+      applyMode();
       renderColours();
       renderSummary();
     } catch (err) {
@@ -219,6 +245,7 @@ import { ORVANA as cfg } from "./config.js";
     form.hidden = false;
   });
 
+  applyMode();
   renderColours();
   renderSummary();
 })();

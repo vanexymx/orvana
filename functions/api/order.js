@@ -37,17 +37,29 @@ function validate(input) {
   const qty = Number(input.qty);
   if (!Number.isInteger(qty) || qty < 1 || qty > 20) return { error: "Quantity must be between 1 and 20." };
 
+  const meet = input.mode === "meet";
+  if (!meet && input.mode !== "ship") return { error: "Please choose delivery or install / handover." };
+
+  const area = meet ? ORVANA.installers.find((p) => p.short === input.area) : null;
+  if (meet && !area) return { error: "Please choose your area (KL or JB)." };
+
+  const referrer = ORVANA.installers.find((p) => p.handle === input.referral);
+  if (!referrer && input.referral !== "none") return { error: "Please choose a referral." };
+
   const order = {
+    meet,
+    area,
+    referral: referrer ? `@${referrer.handle}` : "None",
     name: clean(input.name, 100),
     phone: clean(input.phone, 30),
     email: clean(input.email, 200),
-    address: clean(input.address, 500),
+    address: meet ? "" : clean(input.address, 500),
     discount: clean(input.discount, 50)
   };
   if (!order.name) return { error: "Please add your name." };
   if (!/^\+?\d{9,13}$/.test(order.phone.replace(/[\s-]/g, ""))) return { error: "Please add a valid phone number." };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(order.email)) return { error: "Please add a valid email." };
-  if (order.address.length < 10) return { error: "Please add your full delivery address." };
+  if (!meet && order.address.length < 10) return { error: "Please add your full delivery address." };
   if (input.agree !== true) return { error: "Please agree to the terms." };
 
   return { order: { ...order, product, colour, qty, total: product.price * qty } };
@@ -56,16 +68,18 @@ function validate(input) {
 function renderEmail(id, o) {
   const rows = [
     ["Order", id],
+    ["Receive", o.meet ? `Install / handover — ${o.area.area}` : "Delivery"],
     ["Product", o.product.name],
     ["Colour", o.colour.label],
     ["Quantity", o.qty],
     ["Unit price", money(o.product.price)],
-    ["Total", `${money(o.total)} (shipping included)`],
+    ["Total", o.meet ? money(o.total) : `${money(o.total)} (shipping included)`],
     ["Name", o.name],
     ["Phone", o.phone],
     ["Email", o.email],
-    ["Address", o.address],
-    ["Discount code", o.discount || "-"]
+    ...(o.meet ? [] : [["Address", o.address]]),
+    ["Discount code", o.discount || "-"],
+    ["Referral", o.referral]
   ];
   const text = rows.map(([k, v]) => `${k}: ${v}`).join("\n");
   const html = `
@@ -114,7 +128,7 @@ export async function onRequestPost({ request, env }) {
       from: env.MAIL_FROM || DEFAULT_FROM,
       to: [env.ORDER_EMAIL || ORVANA.orderEmail],
       reply_to: order.email,
-      subject: `New order ${id} — ${order.name} (${order.qty}× ${order.colour.label})`,
+      subject: `New order ${id} — ${order.name} (${order.qty}× ${order.colour.label}, ${order.meet ? `${order.area.short} handover` : "delivery"})`,
       text,
       html
     })

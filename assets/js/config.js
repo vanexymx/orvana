@@ -25,8 +25,7 @@ export const ORVANA = {
         "The rounded inlet lip cuts entry loss by 82%, and the 50 mm clear passage pulls straight from behind the grille — so your engine breathes more, and breathes cooler.",
       colours: [
         { id: "black", label: "Black", hex: "#141414" },
-        { id: "red", label: "Red", hex: "#e1251b" },
-        { id: "white", label: "White", hex: "#f2f2f2" }
+        { id: "red", label: "Red", hex: "#e1251b" }
       ]
     },
     {
