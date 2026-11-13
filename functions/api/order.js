@@ -102,9 +102,7 @@ export async function onRequestPost({ request, env }) {
 
   if (!env.RESEND_API_KEY) {
     console.error("RESEND_API_KEY is not set");
-    // TEMP diagnostic: names only, never values. Remove once ordering works.
-    const seen = Object.keys(env).filter((k) => typeof env[k] === "string").map((k) => `${k}(${env[k].length})`);
-    return json({ ok: false, error: "Ordering is not set up yet.", debug: seen }, 500);
+    return json({ ok: false, error: "Ordering is not set up yet." }, 500);
   }
 
   const id = orderId();
