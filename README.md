@@ -4,12 +4,12 @@ Static website for [@orvana.automative](https://www.instagram.com/orvana.automat
 
 Customers either:
 
-- **Order for delivery**: the form emails the order to orvana.team@gmail.com through [FormSubmit](https://formsubmit.co). ORVANA then contacts the customer to confirm and send payment details.
+- **Order for delivery**: the form posts to `/api/order` ([functions/api/order.js](functions/api/order.js)), which checks the order, prices it from `config.js`, and emails it to orvana.team@gmail.com through [Resend](https://resend.com). ORVANA then contacts the customer to confirm and send payment details.
 - **Arrange installation or handover in KL or JB**: the site links to the Instagram accounts of the people who handle it.
 
 ## Editing the store
 
-Everything you'll usually change is in [`assets/js/config.js`](assets/js/config.js):
+Everything you'll usually change is in [`assets/js/config.js`](assets/js/config.js). The website and the order function both read it:
 
 - `orderEmail`: where delivery orders are sent
 - `installers`: the KL and JB contacts for installation and handover (Instagram handles)
@@ -25,9 +25,20 @@ python3 -m http.server 8000
 
 Then open http://localhost:8000.
 
-## Turning on order emails (one time)
+## Order emails (one-time setup)
 
-After the site is live, place one test order. FormSubmit will email orvana.team@gmail.com an activation link. Click it, and every order after that arrives in the inbox. Until it's activated, customers see a button to email the order themselves instead.
+1. Sign up at [resend.com](https://resend.com) with **orvana.team@gmail.com**. The free plan allows 3,000 emails a month.
+2. In Resend, create an API key with **Sending access**.
+3. In Cloudflare, open **Workers & Pages → orvana → Settings → Variables and Secrets**. Add `RESEND_API_KEY` as a **Secret** for Production, then redeploy.
+
+Until the key is set, the order form shows customers a link to email their order instead.
+
+Optional variables:
+
+- `ORDER_EMAIL`: send orders somewhere other than `orderEmail` in `config.js`.
+- `MAIL_FROM`: the sender address. The default, `onboarding@resend.dev`, can only deliver to the email you signed up to Resend with. After you buy a domain and verify it in Resend, set this to something like `ORVANA <orders@yourdomain>`.
+
+The `python3 -m http.server` preview doesn't run `/api/order`. To test the function locally, run `npx wrangler pages dev .` with a `.dev.vars` file containing `RESEND_API_KEY=...`.
 
 ## Deploying
 

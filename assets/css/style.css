@@ -195,3 +195,6 @@ details p { color: var(--muted); margin: 10px 0 0; }
 .legal h2 { font-size: 1.4rem; margin-top: 1.6em; }
 .legal li { color: var(--muted); margin-bottom: .6em; }
 .legal a { color: var(--accent); }
+
+/* Spam trap: hidden from people, filled in by bots */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

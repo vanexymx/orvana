@@ -170,12 +170,15 @@
               <span>I agree to the <a href="terms.html" target="_blank">order terms and product disclaimer</a>.</span>
             </label>
 
+            <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+
             <p id="form-error" class="error" role="alert" hidden></p>
             <button type="submit" class="btn btn-block" id="submit-btn">Send order</button>
           </form>
 
           <div id="order-done" class="done" hidden>
             <h3>Order received 🎉</h3>
+            <p>Your order number is <strong id="order-id"></strong>.</p>
             <p>Thanks! We've got your order and will contact you shortly to confirm it and share payment details.</p>
             <button type="button" class="btn btn-ghost" id="order-again">Place another order</button>
           </div>
@@ -225,7 +228,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

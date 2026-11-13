@@ -1,5 +1,6 @@
+import { ORVANA as cfg } from "./config.js";
+
 (function () {
-  const cfg = window.ORVANA;
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const money = (n) => `${cfg.currency}${n.toLocaleString("en-MY")}`;
@@ -181,13 +182,25 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending…";
     try {
-      const res = await fetch(`https://formsubmit.co/ajax/${cfg.orderEmail}`, {
+      const res = await fetch("/api/order", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ ...details, _subject: subject, _replyto: details.Email, _template: "table" })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          product: productSel.value,
+          colour: form.colour.value,
+          qty: qty(),
+          name: form.name.value,
+          phone: form.phone.value,
+          email: form.email.value,
+          address: form.address.value,
+          discount: form.discount.value,
+          agree: form.agree.checked,
+          website: form.website.value // honeypot, left empty by people
+        })
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || String(data.success) !== "true") throw new Error(data.message || res.statusText);
+      if (!res.ok || !data.ok) throw new Error(data.error || res.statusText);
+      $("#order-id").textContent = data.orderId;
       form.hidden = true;
       done.hidden = false;
       form.reset();

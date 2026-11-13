@@ -1,6 +1,7 @@
 // Store settings. Edit this file to change prices, products or contact details.
-window.ORVANA = {
-  // Delivery orders are emailed here (via FormSubmit, see README).
+// Shared by the website (assets/js/main.js) and the order API (functions/api/order.js).
+export const ORVANA = {
+  // Delivery orders are emailed here by functions/api/order.js.
   orderEmail: "orvana.team@gmail.com",
   instagram: "https://www.instagram.com/orvana.automative/",
   currency: "RM",
