@@ -22,6 +22,10 @@ import { ORVANA as cfg } from "./config.js";
   });
   $("#year") && ($("#year").textContent = new Date().getFullYear());
 
+  // Price mentions in the page copy come from config.js, so there's one place to change it
+  const headline = cfg.products.find((p) => p.available);
+  if (headline) $$("[data-price]").forEach((el) => (el.textContent = el.dataset.price.replace("{price}", money(headline.price))));
+
   // Installation / handover contacts
   const installerCards = cfg.installers
     .map(
@@ -96,6 +100,21 @@ import { ORVANA as cfg } from "./config.js";
     ...cfg.installers.map((p) => [p.handle, `@${esc(p.handle)}`]),
     ["none", "None", true]
   ]);
+
+  // Spam check (Cloudflare Turnstile). Off until turnstileSiteKey is set in config.js.
+  let turnstileId = null;
+  if (cfg.turnstileSiteKey) {
+    window.onTurnstileLoad = () => {
+      $("#turnstile").hidden = false;
+      turnstileId = window.turnstile.render("#turnstile", { sitekey: cfg.turnstileSiteKey, theme: "dark" });
+    };
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad";
+    script.async = true;
+    document.head.append(script);
+  }
+  const turnstileToken = () => (turnstileId !== null ? window.turnstile.getResponse(turnstileId) || "" : "");
+  const resetTurnstile = () => turnstileId !== null && window.turnstile.reset(turnstileId);
 
   const product = () => available.find((p) => p.id === productSel.value);
   const isMeet = () => $("#m-meet").checked;
@@ -195,6 +214,7 @@ import { ORVANA as cfg } from "./config.js";
     e.preventDefault();
     const problems = validate();
     if (problems.length) return showError(`Please add ${esc(problems.join(", "))}.`);
+    if (cfg.turnstileSiteKey && !turnstileToken()) return showError("Please wait for the spam check above to finish, then try again.");
     errorBox.hidden = true;
 
     const details = orderDetails();
@@ -220,10 +240,13 @@ import { ORVANA as cfg } from "./config.js";
           discount: form.discount.value,
           referral: form.referral.value,
           agree: form.agree.checked,
+          turnstileToken: turnstileToken(),
           website: form.website.value // honeypot, left empty by people
         })
       });
       const data = await res.json().catch(() => ({}));
+      // 400 means the server rejected the details; show its reason instead of the email fallback
+      if (res.status === 400 && data.error) return showError(esc(data.error));
       if (!res.ok || !data.ok) throw new Error(data.error || res.statusText);
       $("#order-id").textContent = data.orderId;
       form.hidden = true;
@@ -235,6 +258,7 @@ import { ORVANA as cfg } from "./config.js";
     } catch (err) {
       showError(`Sorry, we couldn't send your order. <a href="${esc(fallback)}">Email it to us instead</a> — your details will be filled in.`);
     } finally {
+      resetTurnstile(); // each token works once
       submitBtn.disabled = false;
       submitBtn.textContent = "Send order";
     }

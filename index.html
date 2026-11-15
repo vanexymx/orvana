@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ORVANA — Proton S70 Air Duct</title>
-  <meta name="description" content="3D-printed cold air duct for the Proton S70. Bigger opening, smoother path, colder air. RM199 with shipping included across Malaysia.">
+  <meta name="description" content="3D-printed cold air duct for the Proton S70. Bigger opening, smoother path, colder air. Shipping included across Malaysia.">
   <meta property="og:title" content="ORVANA — Proton S70 Air Duct">
-  <meta property="og:description" content="Bigger opening, smoother path, colder air. RM199 with shipping included across Malaysia.">
-  <meta property="og:image" content="assets/img/s70-air-duct.jpg">
+  <meta property="og:description" content="Bigger opening, smoother path, colder air. Shipping included across Malaysia.">
+  <meta property="og:url" content="https://orvana.pages.dev/">
+  <meta property="og:image" content="https://orvana.pages.dev/assets/img/s70-air-duct.jpg">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#0b0b0c">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
@@ -41,7 +42,7 @@
           <h1>Colder air,<br>straight from the grille.</h1>
           <p class="lede">Bigger opening, smoother path, colder air. A plug-and-play intake duct designed for the Proton S70.</p>
           <div class="hero-actions">
-            <a href="#order" class="btn">Order now · RM199</a>
+            <a href="#order" class="btn" data-price="Order now · {price}">Order now</a>
             <a href="#product" class="btn btn-ghost">See details</a>
           </div>
           <p class="hero-note">Shipping included across Malaysia.</p>
@@ -89,7 +90,7 @@
           <h2>Place an order</h2>
           <p>Choose delivery and send us your order. We'll contact you to confirm it and share payment details.</p>
           <ul class="ticks">
-            <li>RM199 per unit, shipping included</li>
+            <li data-price="{price} per unit, shipping included">Shipping included</li>
             <li>All items are pre-order — ships within 5 working days</li>
             <li>Full payment before shipping</li>
           </ul>
@@ -164,9 +165,9 @@
             </fieldset>
 
             <div class="summary" aria-live="polite">
-              <div><span id="s-line">RM199 × 1</span><span id="s-sub">RM199</span></div>
+              <div><span id="s-line"></span><span id="s-sub"></span></div>
               <div><span id="s-ship-label">Shipping</span><span>Included</span></div>
-              <div class="total"><span>Total</span><span id="s-total">RM199</span></div>
+              <div class="total"><span>Total</span><span id="s-total"></span></div>
               <p class="note">Discount codes are applied when we confirm your order.</p>
             </div>
 
@@ -176,6 +177,8 @@
             </label>
 
             <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+
+            <div id="turnstile" hidden></div>
 
             <p id="form-error" class="error" role="alert" hidden></p>
             <button type="submit" class="btn btn-block" id="submit-btn">Send order</button>
@@ -204,7 +207,7 @@
         </details>
         <details>
           <summary>How much is shipping?</summary>
-          <p>Nothing extra — RM199 includes shipping anywhere in Malaysia.</p>
+          <p data-price="Nothing extra — {price} includes shipping anywhere in Malaysia.">Nothing extra — the price includes shipping anywhere in Malaysia.</p>
         </details>
         <details>
           <summary>Can someone install it for me?</summary>

@@ -38,8 +38,29 @@ Optional variables:
 - `ORDER_EMAIL`: send orders somewhere other than `orderEmail` in `config.js`.
 - `MAIL_FROM`: the sender address. The default, `onboarding@resend.dev`, can only deliver to the email you signed up to Resend with. After you buy a domain and verify it in Resend, set this to something like `ORVANA <orders@yourdomain>`.
 
+### Backup copy of every order (optional, recommended)
+
+Orders are emailed, and can also be saved in Cloudflare so one isn't lost if an email goes missing.
+
+1. In Cloudflare, open **Storage & databases → Workers KV** and create a namespace called `orvana-orders`.
+2. Open **Workers & Pages → orvana → Settings → Bindings → Add → KV namespace**. Set the variable name to `ORDERS` and pick `orvana-orders`. Save, then redeploy.
+
+Saved orders appear in that KV namespace, one entry per order number. `"emailed": false` marks an order whose email failed to send.
+
+### Spam check (optional, recommended)
+
+The order form can require Cloudflare Turnstile, an invisible "are you human" check.
+
+1. In Cloudflare, open **Turnstile → Add widget**. Add the hostname `orvana.pages.dev` (and your own domain later) and choose **Managed**.
+2. Copy the **site key** into `turnstileSiteKey` in `assets/js/config.js` and push.
+3. Add the **secret key** in **Workers & Pages → orvana → Settings → Variables and Secrets** as a Secret named `TURNSTILE_SECRET`, then redeploy.
+
+Set both or neither: with only the secret set, every order is rejected.
+
 The `python3 -m http.server` preview doesn't run `/api/order`. To test the function locally, run `npx wrangler pages dev .` with a `.dev.vars` file containing `RESEND_API_KEY=...`.
 
 ## Deploying
 
 The site is hosted on Cloudflare Pages at https://orvana.pages.dev. Cloudflare redeploys automatically whenever `main` is pushed; there is no build step. Deploys and custom domains are managed in the Cloudflare dashboard under **Workers & Pages → orvana**.
+
+If the site moves to a custom domain, update the `og:url` and `og:image` addresses at the top of `index.html`; link previews need the full address.

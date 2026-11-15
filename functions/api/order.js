@@ -6,6 +6,12 @@
 //   ORDER_EMAIL     (optional)          where orders go; defaults to orderEmail in config.js
 //   MAIL_FROM       (optional)          sender; defaults to Resend's test sender, which can only
 //                                       deliver to the email address you signed up to Resend with
+//   TURNSTILE_SECRET (secret, optional) Turnstile secret key; when set, every order must pass
+//                                       the spam check (also set turnstileSiteKey in config.js)
+//
+// Bindings (Settings → Bindings):
+//   ORDERS          (KV namespace, optional)  when bound, every order is also saved here as a
+//                                             backup, keyed by order number
 
 import { ORVANA } from "../../assets/js/config.js";
 
@@ -100,6 +106,50 @@ function renderEmail(id, o) {
   return { text, html };
 }
 
+async function passesSpamCheck(token, request, env) {
+  if (!env.TURNSTILE_SECRET) return true; // spam check not turned on
+  if (!token) return false;
+  const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      secret: env.TURNSTILE_SECRET,
+      response: String(token),
+      remoteip: request.headers.get("CF-Connecting-IP") || undefined
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  return data.success === true;
+}
+
+// Backup copy of the order, so it isn't lost if the email never arrives.
+async function saveOrder(env, id, o, emailed) {
+  if (!env.ORDERS) return;
+  try {
+    await env.ORDERS.put(
+      id,
+      JSON.stringify({
+        id,
+        createdAt: new Date().toISOString(),
+        emailed,
+        receive: o.meet ? `Install / handover — ${o.area.area}` : "Delivery",
+        product: o.product.name,
+        colour: o.colour.label,
+        qty: o.qty,
+        total: o.total,
+        name: o.name,
+        phone: o.phone,
+        email: o.email,
+        address: o.address,
+        discount: o.discount,
+        referral: o.referral
+      })
+    );
+  } catch (err) {
+    console.error("Couldn't save order", id, err);
+  }
+}
+
 export async function onRequestPost({ request, env }) {
   let input;
   try {
@@ -113,6 +163,10 @@ export async function onRequestPost({ request, env }) {
 
   const { order, error } = validate(input);
   if (error) return json({ ok: false, error }, 400);
+
+  if (!(await passesSpamCheck(input.turnstileToken, request, env))) {
+    return json({ ok: false, error: "The spam check didn't pass. Please reload the page and try again." }, 400);
+  }
 
   if (!env.RESEND_API_KEY) {
     console.error("RESEND_API_KEY is not set");
@@ -133,6 +187,8 @@ export async function onRequestPost({ request, env }) {
       html
     })
   });
+
+  await saveOrder(env, id, order, res.ok);
 
   if (!res.ok) {
     console.error("Resend error", res.status, await res.text());

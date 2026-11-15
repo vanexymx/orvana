@@ -4,6 +4,10 @@ export const ORVANA = {
   // Delivery orders are emailed here by functions/api/order.js.
   orderEmail: "orvana.team@gmail.com",
   instagram: "https://www.instagram.com/orvana.automative/",
+
+  // Spam check on the order form (Cloudflare Turnstile). Paste the widget's
+  // site key here to turn it on; leave empty to turn it off. See README.
+  turnstileSiteKey: "",
   currency: "RM",
 
   // People who handle installation and physical handover.
