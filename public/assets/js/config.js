@@ -5,7 +5,8 @@ export const ORVANA = {
   orderEmail: "orvana.team@gmail.com",
   instagram: "https://www.instagram.com/orvana.automative/",
   // Opens a direct message to the shop on Instagram (used for custom orders).
-  instagramDm: "https://ig.me/m/orvana.automative",
+  // Uses instagram.com rather than the ig.me short link, which doesn't connect on some networks.
+  instagramDm: "https://www.instagram.com/m/orvana.automative",
 
   // Spam check on the order form (Cloudflare Turnstile). Paste the widget's
   // site key here to turn it on; leave empty to turn it off. See README.
