@@ -13,7 +13,7 @@
 //   ORDERS          (KV namespace, optional)  when bound, every order is also saved here as a
 //                                             backup, keyed by order number
 
-import { ORVANA } from "../../assets/js/config.js";
+import { ORVANA } from "../../public/assets/js/config.js";
 
 const DEFAULT_FROM = "ORVANA Orders <onboarding@resend.dev>";
 

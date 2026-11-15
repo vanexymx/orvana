@@ -1,75 +1,7 @@
-import { ORVANA as cfg } from "./config.js";
+// Order page: the form, its live total, and sending the order to /api/order.
+import { cfg, $, $$, esc, money, mailto } from "./site.js";
 
 (function () {
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-  const money = (n) => `${cfg.currency}${n.toLocaleString("en-MY")}`;
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-  const igUrl = (handle) => `https://www.instagram.com/${handle}/`;
-  const mailto = (subject, body) =>
-    `mailto:${cfg.orderEmail}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ""}`;
-
-  // Shared links
-  $$("[data-ig-link]").forEach((a) => (a.href = cfg.instagram));
-  $$("[data-email-link]").forEach((a) => (a.href = mailto("Question about ORVANA air ducts")));
-  $$("[data-installer]").forEach((a) => {
-    const person = cfg.installers.find((p) => p.short === a.dataset.installer);
-    if (!person) return;
-    a.href = igUrl(person.handle);
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = `@${person.handle}`;
-  });
-  $("#year") && ($("#year").textContent = new Date().getFullYear());
-
-  // Price mentions in the page copy come from config.js, so there's one place to change it
-  const headline = cfg.products.find((p) => p.available);
-  if (headline) $$("[data-price]").forEach((el) => (el.textContent = el.dataset.price.replace("{price}", money(headline.price))));
-
-  // Installation / handover contacts
-  const installerCards = cfg.installers
-    .map(
-      (p) => `
-      <a class="installer" href="${igUrl(esc(p.handle))}" target="_blank" rel="noopener">
-        <span class="installer-area">${esc(p.short)}</span>
-        <span class="installer-text"><strong>${esc(p.area)}</strong>@${esc(p.handle)}</span>
-        <span class="installer-go" aria-hidden="true">→</span>
-      </a>`
-    )
-    .join("");
-  $("#installers") && ($("#installers").innerHTML = installerCards);
-
-  // Product cards
-  const list = $("#product-list");
-  if (list) {
-    list.innerHTML = cfg.products
-      .map((p) => {
-        const img = p.image
-          ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">`
-          : `<img src="assets/img/logo-mark.png" alt="" class="placeholder-mark">`;
-        const dots = p.colours.map((c) => `<span title="${esc(c.label)}" style="background:${esc(c.hex)}"></span>`).join("");
-        const action = p.available
-          ? `<a href="#order" class="btn btn-small" data-pick="${esc(p.id)}">Order</a>`
-          : `<a href="${esc(cfg.instagram)}" class="btn btn-small btn-ghost" target="_blank" rel="noopener">Follow for updates</a>`;
-        return `
-          <article class="card product">
-            <div class="product-img">${img}</div>
-            <div class="product-body">
-              ${p.available ? "" : `<span class="badge">Coming soon</span>`}
-              <h3>${esc(p.name)}</h3>
-              <p><strong>${esc(p.tagline)}</strong> ${esc(p.description)}</p>
-              ${dots ? `<div class="dots">${dots}</div>` : ""}
-              <div class="product-meta">
-                <span class="price">${p.price != null ? `${money(p.price)} <small>incl. shipping</small>` : ""}</span>
-                ${action}
-              </div>
-            </div>
-          </article>`;
-      })
-      .join("");
-  }
-
-  // Order form
   const form = $("#order-form");
   if (!form) return;
 
@@ -158,14 +90,14 @@ import { ORVANA as cfg } from "./config.js";
     })
   );
 
-  // "Order" buttons on product cards preselect that product
-  document.addEventListener("click", (e) => {
-    const pick = e.target.closest("[data-pick]");
-    if (!pick) return;
-    productSel.value = pick.dataset.pick;
-    renderColours();
-    renderSummary();
-  });
+  // The product photo beside the form follows the chosen product and colour
+  function renderAside() {
+    const p = product();
+    $("#order-img").src = p.image;
+    const c = p.colours.find((x) => x.id === form.colour.value);
+    if (c && c.glow) document.documentElement.style.setProperty("--glow", c.glow);
+  }
+  form.addEventListener("change", renderAside);
 
   function validate() {
     const problems = [];
@@ -251,6 +183,7 @@ import { ORVANA as cfg } from "./config.js";
       $("#order-id").textContent = data.orderId;
       form.hidden = true;
       done.hidden = false;
+      done.scrollIntoView({ block: "center" });
       form.reset();
       applyMode();
       renderColours();
@@ -269,7 +202,14 @@ import { ORVANA as cfg } from "./config.js";
     form.hidden = false;
   });
 
+  // Arriving from a product page: order.html?product=<id>&colour=<id>
+  const query = new URLSearchParams(location.search);
+  if (available.some((p) => p.id === query.get("product"))) productSel.value = query.get("product");
+
   applyMode();
   renderColours();
+  const wanted = $(`#f-colours input[value="${CSS.escape(query.get("colour") || "")}"]`);
+  if (wanted) wanted.checked = true;
   renderSummary();
+  renderAside();
 })();
