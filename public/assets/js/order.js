@@ -127,7 +127,7 @@ import { cfg, $, $$, esc, money, mailto } from "./site.js";
     const colour = p.colours.find((c) => c.id === form.colour.value);
     const area = cfg.installers.find((a) => a.short === form.area.value);
     return {
-      ...(p.preorder ? { Type: `Pre-order — ships at launch (${p.preorder.launch})` } : {}),
+      ...(p.preorder ? { Type: `Pre-order — ships from ${p.preorder.launch}` } : {}),
       Receive: isMeet() ? `Install / handover — ${area ? area.area : "-"}` : "Delivery",
       Product: p.name,
       Colour: colour ? colour.label : "-",

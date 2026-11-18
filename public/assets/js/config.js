@@ -38,7 +38,7 @@ export const ORVANA = {
         { src: "assets/img/s70-batch.jpg", alt: "A batch of red and black S70 air ducts" }
       ],
       tagline: "Bigger opening, smoother path, colder air.",
-      note: "Pre-order: made within 5 working days.",
+      note: "Pre-order: shipping starts December 2026.",
       description:
         "The rounded inlet lip cuts entry loss by 82%, and the 50 mm clear passage pulls straight from behind the grille — so your engine breathes more, and breathes cooler.",
       specs: [
@@ -46,7 +46,7 @@ export const ORVANA = {
         ["Inlet", "Rounded lip, 82% less entry loss"],
         ["Passage", "50 mm clear, straight from behind the grille"],
         ["Install", "Plug-and-play, replaces the original cover/panel"],
-        ["Lead time", "Made to order, up to 5 working days"]
+        ["Shipping", "Made to order, shipping starts December 2026"]
       ],
       colours: [
         { id: "black", label: "Black", hex: "#141414", glow: "255, 255, 255" },
@@ -78,11 +78,11 @@ export const ORVANA = {
       tagline: "Cold air for the Myvi, fully plug-and-play.",
       description:
         "Feeds your Myvi G3 or G3.5 intake with cooler air from the front of the car. Fully plug-and-play: no cutting, drilling or modifications.",
-      note: "Pre-order at the launch promo price. Orders ship once we officially launch.",
+      note: "Pre-order at the launch promo price. Shipping starts December 2026.",
       specs: [
         ["Fits", "Perodua Myvi G3 and G3.5"],
         ["Install", "Fully plug-and-play, no cutting or drilling"],
-        ["Launch", "Officially launching December 2026"]
+        ["Shipping", "Starts December 2026, at the official launch"]
       ],
       colours: [
         { id: "black", label: "Black", hex: "#141414", glow: "255, 255, 255" },

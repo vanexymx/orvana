@@ -75,7 +75,7 @@ function renderEmail(id, o) {
   const rows = [
     ["Order", id],
     ["Receive", o.meet ? `Install / handover — ${o.area.area}` : "Delivery"],
-    ...(o.product.preorder ? [["Type", `PRE-ORDER — ships at launch (${o.product.preorder.launch})`]] : []),
+    ...(o.product.preorder ? [["Type", `PRE-ORDER — ships from ${o.product.preorder.launch}`]] : []),
     ["Product", o.product.name],
     ["Colour", o.colour.label],
     ["Quantity", o.qty],
