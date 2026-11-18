@@ -75,10 +75,16 @@ function renderEmail(id, o) {
   const rows = [
     ["Order", id],
     ["Receive", o.meet ? `Install / handover — ${o.area.area}` : "Delivery"],
+    ...(o.product.preorder ? [["Type", `PRE-ORDER — ships at launch (${o.product.preorder.launch})`]] : []),
     ["Product", o.product.name],
     ["Colour", o.colour.label],
     ["Quantity", o.qty],
-    ["Unit price", money(o.product.price)],
+    [
+      "Unit price",
+      o.product.preorder
+        ? `${money(o.product.price)} (pre-launch promo, normally ${money(o.product.preorder.normalPrice)})`
+        : money(o.product.price)
+    ],
     ["Total", o.meet ? money(o.total) : `${money(o.total)} (shipping included)`],
     ["Name", o.name],
     ["Phone", o.phone],
@@ -133,6 +139,7 @@ async function saveOrder(env, id, o, emailed) {
         createdAt: new Date().toISOString(),
         emailed,
         receive: o.meet ? `Install / handover — ${o.area.area}` : "Delivery",
+        preorder: Boolean(o.product.preorder),
         product: o.product.name,
         colour: o.colour.label,
         qty: o.qty,
@@ -182,7 +189,7 @@ export async function onRequestPost({ request, env }) {
       from: env.MAIL_FROM || DEFAULT_FROM,
       to: [env.ORDER_EMAIL || ORVANA.orderEmail],
       reply_to: order.email,
-      subject: `New order ${id} — ${order.name} (${order.qty}× ${order.colour.label}, ${order.meet ? `${order.area.short} handover` : "delivery"})`,
+      subject: `New ${order.product.preorder ? "PRE-ORDER" : "order"} ${id} — ${order.name} (${order.qty}× ${order.product.car} ${order.colour.label}, ${order.meet ? `${order.area.short} handover` : "delivery"})`,
       text,
       html
     })

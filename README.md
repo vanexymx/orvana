@@ -28,6 +28,9 @@ Everything you'll usually change is in [`public/assets/js/config.js`](public/ass
 - `orderEmail`: where delivery orders are sent
 - `installers`: the KL and JB contacts for installation and handover (Instagram handles)
 - `products`: name, price (shipping included), colours, photos, specs, and `available: false` for "coming soon"
+- Pre-orders: a product with a `preorder` block (`normalPrice`, `launch`, `orderPage`) shows the normal price struck through,
+  charges `price`, and orders through its own page (e.g. `myvi-preorder.html`, `<body data-order="preorder">`).
+  At launch: set `price` to the normal price, delete the `preorder` block, and orders move to `order.html`.
 
 Product photos go in `public/assets/img/`.
 

@@ -194,6 +194,11 @@ p { margin: 0 0 1em; }
 .price small { font: 500 .8rem var(--font-body); color: var(--muted); }
 .badge { display: inline-block; padding: .25em .8em; border-radius: 999px; background: rgba(8, 8, 10, .75); backdrop-filter: blur(6px); border: 1px solid var(--line); color: var(--text); font-size: .78rem; font-weight: 600; }
 .badge-float { position: absolute; top: 14px; left: 14px; }
+.badge-hot { background: var(--accent, #e1251b); border-color: transparent; color: #fff; vertical-align: middle; margin-left: .4em; }
+.badge-float.badge-hot { margin-left: 0; }
+.was { color: var(--muted); font-weight: 500; font-size: .7em; text-decoration-thickness: 2px; text-decoration-color: var(--accent-text); margin-right: .2em; }
+.promo { margin: -.2em 0 1em; padding: .7em 1em; border: 1px solid rgba(225, 37, 27, .45); border-radius: 12px; background: rgba(225, 37, 27, .1); font-size: .92rem; }
+.promo strong { color: var(--accent-text); }
 .dots { display: flex; gap: 6px; }
 .dots span { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #555; }
 

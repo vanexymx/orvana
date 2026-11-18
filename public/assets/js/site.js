@@ -63,6 +63,14 @@ function renderChrome() {
 
 /* ---------- Building blocks ---------- */
 
+// Price, with the normal price struck through while a pre-order promo runs.
+export const priceHtml = (p) =>
+  p.preorder ? `<s class="was">${money(p.preorder.normalPrice)}</s> ${money(p.price)}` : money(p.price);
+
+// Where a product's Order button goes.
+export const orderUrl = (p, colour) =>
+  `${p.preorder ? p.preorder.orderPage : "order.html"}?product=${encodeURIComponent(p.id)}${colour ? `&colour=${encodeURIComponent(colour)}` : ""}`;
+
 export function productCard(p) {
   const href = p.available && p.page ? p.page : cfg.instagram;
   const ext = p.available ? "" : ' target="_blank" rel="noopener"';
@@ -71,7 +79,7 @@ export function productCard(p) {
     <article class="card product tilt reveal">
       <a class="product-img" href="${esc(href)}"${ext} tabindex="-1" aria-hidden="true">
         <img src="${esc(p.image)}" alt="" loading="lazy" style="view-transition-name: img-${esc(p.id)}">
-        ${p.available ? "" : `<span class="badge badge-float">Coming soon</span>`}
+        ${p.available ? (p.preorder ? `<span class="badge badge-float badge-hot">Pre-order · Save ${money(p.preorder.normalPrice - p.price)}</span>` : "") : `<span class="badge badge-float">Coming soon</span>`}
       </a>
       <div class="product-body">
         <p class="eyebrow">${esc(p.car)}</p>
@@ -79,7 +87,7 @@ export function productCard(p) {
         <p>${esc(p.available ? p.tagline : p.description)}</p>
         ${dots ? `<div class="dots">${dots}</div>` : ""}
         <div class="product-meta">
-          <span class="price">${p.price != null ? `${money(p.price)} <small>incl. shipping</small>` : ""}</span>
+          <span class="price">${p.price != null ? `${priceHtml(p)} <small>incl. shipping</small>` : ""}</span>
           ${
             p.available
               ? `<a href="${esc(p.page)}" class="btn btn-small">View</a>`
@@ -138,7 +146,7 @@ function fillShared() {
     a.textContent = `@${person.handle}`;
   });
   // Price mentions in the page copy come from config.js, so there's one place to change it
-  const headline = cfg.products.find((p) => p.available);
+  const headline = cfg.products.find((p) => p.available && !p.preorder);
   if (headline) $$("[data-price]").forEach((el) => (el.textContent = el.dataset.price.replace("{price}", money(headline.price))));
 }
 

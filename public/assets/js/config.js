@@ -19,8 +19,9 @@ export const ORVANA = {
     { area: "Johor Bahru", short: "JB", handle: "gg_5968" }
   ],
 
-  // To add a product: add it here, then copy s70-air-duct.html to <id>.html
+  // To add a product: add it here, then copy s70-air-duct.html to its page
   // and change the data-product attribute on its <body>.
+  // available: false shows it as "Coming soon".
   products: [
     {
       id: "s70-air-duct",
@@ -37,6 +38,7 @@ export const ORVANA = {
         { src: "assets/img/s70-batch.jpg", alt: "A batch of red and black S70 air ducts" }
       ],
       tagline: "Bigger opening, smoother path, colder air.",
+      note: "Pre-order: made within 5 working days.",
       description:
         "The rounded inlet lip cuts entry loss by 82%, and the 50 mm clear passage pulls straight from behind the grille — so your engine breathes more, and breathes cooler.",
       specs: [
@@ -55,18 +57,37 @@ export const ORVANA = {
       id: "myvi-g3-air-duct",
       name: "Myvi G3 & G3.5 Air Duct",
       car: "Perodua Myvi G3 / G3.5",
-      price: null,
-      available: false,
-      page: null,
-      image: "assets/img/myvi-grille.jpg",
+      price: 159, // pre-launch promo price, shipping included; this is what orders are charged
+      // Pre-order: shows the normal price struck through and sends orders to orderPage.
+      // When it launches, set price to 199 and delete this preorder block.
+      preorder: {
+        normalPrice: 199,
+        launch: "December 2026",
+        orderPage: "myvi-preorder.html"
+      },
+      available: true,
+      page: "myvi-air-duct.html",
+      image: "assets/img/myvi-studio.jpg",
       gallery: [
-        { src: "assets/img/myvi-grille.jpg", alt: "Red air duct behind a Myvi front grille" },
+        { src: "assets/img/myvi-studio.jpg", alt: "Black Myvi G3 air duct" },
+        { src: "assets/img/myvi-grille.jpg", alt: "Red air duct seen through a Myvi front grille" },
+        { src: "assets/img/myvi-fitted.jpg", alt: "Red air duct fitted beside the bonnet latch" },
+        { src: "assets/img/myvi-hose.jpg", alt: "Myvi engine bay with the intake hose running to the air box" },
         { src: "assets/img/myvi-bay.jpg", alt: "Myvi engine bay with the air duct fitted" }
       ],
-      tagline: "Coming soon.",
-      description: "Colder air for the Myvi G3 and G3.5. Follow us on Instagram to hear when it launches.",
-      specs: [],
-      colours: []
+      tagline: "Cold air for the Myvi, fully plug-and-play.",
+      description:
+        "Feeds your Myvi G3 or G3.5 intake with cooler air from the front of the car. Fully plug-and-play: no cutting, drilling or modifications.",
+      note: "Pre-order at the launch promo price. Orders ship once we officially launch.",
+      specs: [
+        ["Fits", "Perodua Myvi G3 and G3.5"],
+        ["Install", "Fully plug-and-play, no cutting or drilling"],
+        ["Launch", "Officially launching December 2026"]
+      ],
+      colours: [
+        { id: "black", label: "Black", hex: "#141414", glow: "255, 255, 255" },
+        { id: "red", label: "Red", hex: "#e1251b", glow: "225, 37, 27" }
+      ]
     }
   ]
 };

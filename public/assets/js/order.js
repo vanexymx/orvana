@@ -1,11 +1,13 @@
-// Order page: the form, its live total, and sending the order to /api/order.
+// Order form (order.html and pre-order pages): the form, its live total, and sending the order to /api/order.
+// <body data-order="preorder"> lists only pre-order products; otherwise only products in stock.
 import { cfg, $, $$, esc, money, mailto } from "./site.js";
 
 (function () {
   const form = $("#order-form");
   if (!form) return;
 
-  const available = cfg.products.filter((p) => p.available);
+  const preorderPage = document.body.dataset.order === "preorder";
+  const available = cfg.products.filter((p) => p.available && Boolean(p.preorder) === preorderPage);
   const productSel = $("#f-product");
   const qtyInput = $("#f-qty");
   const errorBox = $("#form-error");
@@ -15,6 +17,8 @@ import { cfg, $, $$, esc, money, mailto } from "./site.js";
   productSel.innerHTML = available
     .map((p) => `<option value="${esc(p.id)}">${esc(p.name)} — ${money(p.price)}</option>`)
     .join("");
+  // One product: no need to choose
+  $("#product-field").hidden = available.length < 2;
 
   const radios = (name, options) =>
     options
@@ -69,6 +73,8 @@ import { cfg, $, $$, esc, money, mailto } from "./site.js";
     $("#s-line").textContent = `${money(p.price)} × ${qty()}`;
     $("#s-sub").textContent = money(p.price * qty());
     $("#s-total").textContent = money(p.price * qty());
+    const save = $("#s-save");
+    if (save && p.preorder) save.textContent = `−${money((p.preorder.normalPrice - p.price) * qty())}`;
   }
 
   // Delivery needs an address; install/handover needs an area instead
@@ -121,6 +127,7 @@ import { cfg, $, $$, esc, money, mailto } from "./site.js";
     const colour = p.colours.find((c) => c.id === form.colour.value);
     const area = cfg.installers.find((a) => a.short === form.area.value);
     return {
+      ...(p.preorder ? { Type: `Pre-order — ships at launch (${p.preorder.launch})` } : {}),
       Receive: isMeet() ? `Install / handover — ${area ? area.area : "-"}` : "Delivery",
       Product: p.name,
       Colour: colour ? colour.label : "-",
@@ -150,7 +157,7 @@ import { cfg, $, $$, esc, money, mailto } from "./site.js";
     errorBox.hidden = true;
 
     const details = orderDetails();
-    const subject = `New ORVANA order — ${details.Name} (${details.Quantity}× ${details.Colour})`;
+    const subject = `New ORVANA ${product().preorder ? "pre-order" : "order"} — ${details.Name} (${details.Quantity}× ${details.Colour})`;
     const fallback = mailto(subject, Object.entries(details).map(([k, v]) => `${k}: ${v}`).join("\n"));
 
     submitBtn.disabled = true;

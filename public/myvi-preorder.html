@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pre-order the Myvi G3 &amp; G3.5 Air Duct — ORVANA</title>
+  <meta name="description" content="Pre-order the ORVANA Myvi G3 &amp; G3.5 air duct at the pre-launch promo price. Fully plug-and-play, shipping included across Malaysia.">
+  <meta name="theme-color" content="#08080a">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <meta property="og:title" content="Pre-order the Myvi G3 &amp; G3.5 Air Duct — ORVANA">
+  <meta property="og:url" content="https://orvana.pages.dev/myvi-preorder">
+  <meta property="og:image" content="https://orvana.pages.dev/assets/img/myvi-grille.jpg">
+</head>
+<body data-page="order" data-order="preorder">
+  <header class="site-header" id="site-header"></header>
+
+  <main>
+    <section class="page-head">
+      <div class="wrap">
+        <p class="eyebrow">Pre-order · Myvi G3 &amp; G3.5</p>
+        <h1>Pre-order before launch.</h1>
+        <p>Lock in the pre-launch promo price. Send us your pre-order and we'll contact you to confirm it and share payment details.</p>
+      </div>
+    </section>
+
+    <div class="wrap order">
+      <aside class="order-aside">
+        <img id="order-img" src="assets/img/myvi-studio.jpg" alt="">
+        <ul class="ticks">
+          <li>Pre-launch promo price, shipping included</li>
+          <li>Ships once we officially launch in December 2026</li>
+          <li>Fully plug-and-play, no cutting or drilling</li>
+          <li>Full payment before shipping</li>
+          <li>Installation and handover in KL and JB</li>
+        </ul>
+      </aside>
+
+      <div class="card form">
+        <form id="order-form" novalidate>
+          <fieldset>
+            <legend>How would you like to receive it?</legend>
+            <div class="pills" role="radiogroup">
+              <div class="pill">
+                <input type="radio" name="mode" id="m-ship" value="ship" checked>
+                <label for="m-ship">Deliver to me</label>
+              </div>
+              <div class="pill">
+                <input type="radio" name="mode" id="m-meet" value="meet">
+                <label for="m-meet">Install / handover (KL, JB)</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset id="area-field" hidden>
+            <legend>Area</legend>
+            <div id="f-area" class="pills" role="radiogroup"></div>
+            <p class="note">We'll contact you to arrange the installation or handover.</p>
+          </fieldset>
+
+          <fieldset id="product-field">
+            <legend>Product</legend>
+            <select id="f-product" name="product" required></select>
+          </fieldset>
+
+          <fieldset>
+            <legend>Colour</legend>
+            <div id="f-colours" class="swatches" role="radiogroup"></div>
+          </fieldset>
+
+          <label class="field">
+            <span>Quantity</span>
+            <div class="qty">
+              <button type="button" data-qty="-1" aria-label="Decrease quantity">−</button>
+              <input id="f-qty" name="qty" type="number" inputmode="numeric" min="1" max="20" value="1" required>
+              <button type="button" data-qty="1" aria-label="Increase quantity">+</button>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Name</span>
+            <input name="name" autocomplete="name" required>
+          </label>
+          <div class="row-2">
+            <label class="field">
+              <span>Phone number</span>
+              <input name="phone" type="tel" autocomplete="tel" placeholder="012-345 6789" required>
+            </label>
+            <label class="field">
+              <span>Email</span>
+              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+            </label>
+          </div>
+          <label class="field" id="address-field">
+            <span>Delivery address</span>
+            <textarea name="address" rows="3" autocomplete="street-address" required></textarea>
+          </label>
+          <label class="field">
+            <span>Discount code <small>(optional)</small></span>
+            <input name="discount" autocomplete="off">
+          </label>
+          <fieldset>
+            <legend>Referral</legend>
+            <div id="f-referral" class="pills" role="radiogroup"></div>
+          </fieldset>
+
+          <div class="summary" aria-live="polite">
+            <div><span id="s-line"></span><span id="s-sub"></span></div>
+            <div><span>Pre-launch promo</span><span id="s-save"></span></div>
+            <div><span id="s-ship-label">Shipping</span><span>Included</span></div>
+            <div class="total"><span>Total</span><span id="s-total"></span></div>
+            <p class="note">Discount codes are applied when we confirm your order.</p>
+          </div>
+
+          <label class="check">
+            <input type="checkbox" name="agree" required>
+            <span>I agree to the <a href="terms.html" target="_blank">order terms and product disclaimer</a>.</span>
+          </label>
+
+          <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+
+          <div id="turnstile" hidden></div>
+
+          <p id="form-error" class="error" role="alert" hidden></p>
+          <button type="submit" class="btn btn-block" id="submit-btn">Send pre-order</button>
+        </form>
+
+        <div id="order-done" class="done" hidden>
+          <svg class="tick" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="38"/><path d="M26 43l11 11 21-23"/></svg>
+          <h2>Pre-order received</h2>
+          <p>Your order number is <strong id="order-id"></strong>.</p>
+          <p>Thanks! We've got your pre-order and will contact you shortly to confirm it and share payment details. It ships once we launch.</p>
+          <button type="button" class="btn btn-ghost" id="order-again">Place another pre-order</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script type="module" src="assets/js/site.js"></script>
+  <script type="module" src="assets/js/order.js"></script>
+</body>
+</html>

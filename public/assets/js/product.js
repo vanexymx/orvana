@@ -1,5 +1,5 @@
 // Product page: fills #pdp from config.js for the product named in <body data-product="...">.
-import { cfg, $, $$, esc, money } from "./site.js";
+import { cfg, $, $$, esc, money, priceHtml, orderUrl } from "./site.js";
 
 const p = cfg.products.find((x) => x.id === document.body.dataset.product);
 const root = $("#pdp");
@@ -26,9 +26,14 @@ if (p && root) {
     </div>
 
     <div class="pdp-info">
-      <p class="eyebrow">${esc(p.car)}</p>
+      <p class="eyebrow">${esc(p.car)}${p.preorder ? ` <span class="badge badge-hot">Pre-order</span>` : ""}</p>
       <h1>${esc(p.name)}</h1>
-      <p class="pdp-price">${money(p.price)} <small>shipping included</small></p>
+      <p class="pdp-price">${priceHtml(p)} <small>shipping included</small></p>
+      ${
+        p.preorder
+          ? `<p class="promo"><strong>Pre-launch promo: save ${money(p.preorder.normalPrice - p.price)}.</strong> Normally ${money(p.preorder.normalPrice)}. Officially launching ${esc(p.preorder.launch)}.</p>`
+          : ""
+      }
       <p class="lede"><strong>${esc(p.tagline)}</strong> ${esc(p.description)}</p>
 
       <fieldset>
@@ -47,10 +52,10 @@ if (p && root) {
       </fieldset>
 
       <div class="pdp-actions">
-        <a href="order.html" class="btn" id="pdp-order">Order this duct</a>
+        <a href="${esc(orderUrl(p))}" class="btn" id="pdp-order">${p.preorder ? `Pre-order · ${money(p.price)}` : "Order this duct"}</a>
         <a href="${esc(cfg.instagramDm)}" class="btn btn-ghost" target="_blank" rel="noopener">Ask a question</a>
       </div>
-      <p class="note">Pre-order: made within 5 working days. Installation and handover available in KL and JB.</p>
+      <p class="note">${esc(p.note || "")} Installation and handover available in KL and JB.</p>
 
       <dl class="specs">
         ${p.specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}
@@ -72,7 +77,7 @@ if (p && root) {
   const applyColour = () => {
     const c = p.colours.find((x) => x.id === $('input[name="colour"]:checked', root).value);
     document.documentElement.style.setProperty("--glow", c.glow);
-    $("#pdp-order").href = `order.html?product=${encodeURIComponent(p.id)}&colour=${encodeURIComponent(c.id)}`;
+    $("#pdp-order").href = orderUrl(p, c.id);
   };
   $$('input[name="colour"]', root).forEach((r) => r.addEventListener("change", applyColour));
   applyColour();
