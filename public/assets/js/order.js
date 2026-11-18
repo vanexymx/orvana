@@ -70,8 +70,10 @@ import { cfg, $, $$, esc, money, mailto } from "./site.js";
 
   function renderSummary() {
     const p = product();
-    $("#s-line").textContent = `${money(p.price)} × ${qty()}`;
-    $("#s-sub").textContent = money(p.price * qty());
+    // Pre-orders list the normal price, then take the promo off it
+    const unit = p.preorder ? p.preorder.normalPrice : p.price;
+    $("#s-line").textContent = `${money(unit)} × ${qty()}`;
+    $("#s-sub").textContent = money(unit * qty());
     $("#s-total").textContent = money(p.price * qty());
     const save = $("#s-save");
     if (save && p.preorder) save.textContent = `−${money((p.preorder.normalPrice - p.price) * qty())}`;
